@@ -5,16 +5,8 @@
  * 前端通过调用这个函数来使用 AI 服务
  *
  * 部署到 Vercel 后，在环境变量中配置：
- * - GEMINI_API_KEY
- * - BIGMODEL_API_KEY
+ * - BIGMODEL_API_KEY (生产环境必需)
  */
-
-import { NextRequest, NextResponse } from 'next/server';
-
-// 支持 Vercel Edge Runtime
-export const config = {
-  runtime: 'edge',
-};
 
 interface AIRequest {
   service: 'gemini' | 'bigmodel';
@@ -22,19 +14,25 @@ interface AIRequest {
   params: Record<string, any>;
 }
 
-export default async function handler(req: NextRequest) {
+interface AIResponse {
+  success: boolean;
+  data?: any;
+  error?: string;
+}
+
+export default async function handler(request: Request): Promise<Response> {
   // 只允许 POST 请求
-  if (req.method !== 'POST') {
-    return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
+  if (request.method !== 'POST') {
+    return Response.json({ error: 'Method not allowed' } as AIResponse, { status: 405 });
   }
 
   try {
-    const { service, action, params }: AIRequest = await req.json();
+    const { service, action, params }: AIRequest = await request.json();
 
     // 验证请求参数
     if (!service || !action) {
-      return NextResponse.json(
-        { error: 'Missing required parameters' },
+      return Response.json(
+        { error: 'Missing required parameters' } as AIResponse,
         { status: 400 }
       );
     }
@@ -49,19 +47,19 @@ export default async function handler(req: NextRequest) {
         result = await callBigModelAPI(action, params);
         break;
       default:
-        return NextResponse.json(
-          { error: 'Invalid service' },
+        return Response.json(
+          { error: 'Invalid service' } as AIResponse,
           { status: 400 }
         );
     }
 
-    return NextResponse.json({ success: true, data: result });
+    return Response.json({ success: true, data: result } as AIResponse);
   } catch (error) {
     console.error('AI API Error:', error);
-    return NextResponse.json(
+    return Response.json(
       {
         error: error instanceof Error ? error.message : 'Internal server error'
-      },
+      } as AIResponse,
       { status: 500 }
     );
   }
