@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import Cropper from 'cropperjs';
-import { geminiService } from './geminiService';
+import { geminiService, isGeminiAvailable } from './geminiService';
 import { bigmodelService } from './bigmodelService';
 import { translations } from './i18n';
 import { ToolType, Language, ToolConfig, ID_PHOTO_SIZES, IDPhotoSizeConfig, ToolCategory } from './types';
@@ -113,11 +113,16 @@ const TOOLS: ToolConfig[] = [
 // AI 服务类型
 type AIService = 'gemini' | 'bigmodel';
 
+// 初始化 AI 服务：生产环境强制使用 BigModel
+const getInitialAIService = (): AIService => {
+  return isGeminiAvailable() ? 'gemini' : 'bigmodel';
+};
+
 const App: React.FC = () => {
   const [lang, setLang] = useState<Language>('zh');
   const [activeTool, setActiveTool] = useState<ToolType>('home');
   const [currentCategory, setCurrentCategory] = useState<ToolCategory>('all');
-  const [aiService, setAiService] = useState<AIService>('bigmodel');
+  const [aiService, setAiService] = useState<AIService>(getInitialAIService());
   const [image, setImage] = useState<string | null>(null);
   const [processed, setProcessed] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -391,18 +396,22 @@ const App: React.FC = () => {
           <h1 className="text-xl font-black tracking-tighter text-indigo-900 uppercase">Bingo <span className="text-slate-400 font-medium">Tools</span></h1>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex gap-2 bg-slate-100 p-1 rounded-full">
-            <button
-              onClick={() => setAiService('gemini')}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${aiService === 'gemini' ? 'bg-white shadow text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
-              title="Google Gemini AI"
-            >Gemini</button>
-            <button
-              onClick={() => setAiService('bigmodel')}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${aiService === 'bigmodel' ? 'bg-white shadow text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
-              title="智谱AI BigModel"
-            >智谱AI</button>
-          </div>
+          {/* AI 服务选择 - 仅在开发环境显示 Gemini 选项 */}
+          {isGeminiAvailable() && (
+            <div className="flex gap-2 bg-slate-100 p-1 rounded-full">
+              <button
+                onClick={() => setAiService('gemini')}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${aiService === 'gemini' ? 'bg-white shadow text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
+                title="Google Gemini AI"
+              >Gemini</button>
+              <button
+                onClick={() => setAiService('bigmodel')}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${aiService === 'bigmodel' ? 'bg-white shadow text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}
+                title="智谱AI BigModel"
+              >智谱AI</button>
+            </div>
+          )}
+          {/* 语言选择 */}
           <div className="flex gap-2 bg-slate-100 p-1 rounded-full">
             <button onClick={() => setLang('zh')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${lang === 'zh' ? 'bg-white shadow text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}>中文</button>
             <button onClick={() => setLang('en')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${lang === 'en' ? 'bg-white shadow text-indigo-600' : 'text-slate-500 hover:text-slate-700'}`}>EN</button>

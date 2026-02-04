@@ -1,12 +1,35 @@
 
 import { GoogleGenAI } from "@google/genai";
 
+/**
+ * 检查是否为开发环境
+ * Gemini API 仅在本地开发环境使用
+ */
+const isDevelopment = import.meta.env.DEV;
+
+/**
+ * 检查 Gemini API Key 是否可用
+ */
+export const isGeminiAvailable = (): boolean => {
+  return isDevelopment && !!import.meta.env.VITE_GEMINI_API_KEY;
+};
+
 export class GeminiService {
   private ai: GoogleGenAI;
 
   constructor() {
+    // Gemini API 仅在开发环境可用
+    if (!isDevelopment) {
+      throw new Error('Gemini API is only available in development environment. Please use BigModel in production.');
+    }
+
     // Vite 环境变量使用 import.meta.env
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
+
+    if (!apiKey) {
+      throw new Error('VITE_GEMINI_API_KEY is not configured. Please add it to your .env.local file for local development.');
+    }
+
     this.ai = new GoogleGenAI({ apiKey });
   }
 

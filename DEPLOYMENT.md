@@ -49,10 +49,9 @@
 
    | 名称 | 值 | 必需 |
    |------|-----|------|
-   | `GEMINI_API_KEY` | 你的 Gemini API Key | 可选 |
-   | `BIGMODEL_API_KEY` | 你的智谱API Key | 可选 |
+   | `BIGMODEL_API_KEY` | 你的智谱API Key | **必需** |
 
-   > **注意**：至少配置一个 API Key
+   > **注意**：生产环境只使用智谱AI，无需配置 Gemini API Key
 
 4. **部署**
    - 点击 "Deploy" 按钮
@@ -80,7 +79,6 @@
 
 4. **配置环境变量**
    ```bash
-   vercel env add GEMINI_API_KEY
    vercel env add BIGMODEL_API_KEY
    ```
 
@@ -111,7 +109,14 @@
    cp .env.example .env.local
    ```
 
-   编辑 `.env.local` 填入你的 API Keys
+   编辑 `.env.local`：
+```env
+# 本地开发：可同时配置两个 API Key
+VITE_GEMINI_API_KEY=你的_Gemini_API_Key
+VITE_BIGMODEL_API_KEY=你的_智谱API_Key
+```
+
+> **注意**：本地开发可使用 Gemini 和智谱AI，生产环境只使用智谱AI
 
 4. **测试本地运行**
    ```bash
@@ -165,9 +170,10 @@
    点击 "Environment Variables" 添加：
 
    ```
-   GEMINI_API_KEY = 你的_Gemini_API_Key
    BIGMODEL_API_KEY = 你的_智谱API_Key
    ```
+
+   > **注意**：生产环境只需配置智谱AI API Key
 
 3. **部署**
    - 点击 "Deploy" 按钮
@@ -178,14 +184,31 @@
 
 ## 环境变量配置
 
+### 本地开发环境
+
+本地开发可以同时使用 Gemini 和智谱AI：
+
+```env
+VITE_GEMINI_API_KEY=你的_Gemini_API_Key
+VITE_BIGMODEL_API_KEY=你的_智谱API_Key
+```
+
+### 生产环境（Vercel）
+
+生产环境**只使用智谱AI**，只需配置：
+
+```
+BIGMODEL_API_KEY = 你的_智谱API_Key
+```
+
 ### 获取 API Keys
 
-#### Google Gemini API Key
+#### Google Gemini API Key（仅本地开发）
 1. 访问 [Google AI Studio](https://makersuite.google.com/app/apikey)
 2. 创建新的 API Key
-3. 复制并保存
+3. 复制到 `.env.local`
 
-#### 智谱AI API Key
+#### 智谱AI API Key（本地 + 生产）
 1. 访问 [智谱AI 开放平台](https://open.bigmodel.cn/)
 2. 注册/登录账号
 3. 在控制台创建 API Key
@@ -196,19 +219,16 @@
 **通过 Dashboard**：
 1. 进入项目设置 → Environment Variables
 2. 添加变量：
-   - Key: `GEMINI_API_KEY`, Value: `你的密钥`
-   - Key: `BIGMODEL_API_KEY`, Value: `你的密钥`
+   - Key: `BIGMODEL_API_KEY`, Value: `你的智谱API密钥`
 3. 选择环境（Production / Preview / Development）
 4. 保存并重新部署
 
 **通过 CLI**：
 ```bash
 # 生产环境
-vercel env add GEMINI_API_KEY production
 vercel env add BIGMODEL_API_KEY production
 
 # 预览环境
-vercel env add GEMINI_API_KEY preview
 vercel env add BIGMODEL_API_KEY preview
 ```
 
