@@ -200,7 +200,6 @@ MIT License
 
 - [在线演示](https://your-project.vercel.app)
 - [部署指南](DEPLOYMENT.md)
-- [Google AI Studio 原项目](https://ai.studio/apps/drive/178lB-tnEX9d1arJO4vpktzgJ7Oq43Hhx)
 
 ---
 
