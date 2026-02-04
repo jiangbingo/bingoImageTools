@@ -1,0 +1,7 @@
+{
+  "name": "BingoImageTools",
+  "description": "Professional all-in-one image optimization and AI creation toolkit.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
