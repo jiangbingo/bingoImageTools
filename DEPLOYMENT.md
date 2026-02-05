@@ -19,8 +19,7 @@
 
 1. **GitHub 账号** - 用于代码托管
 2. **Vercel 账号** - 用于部署（可用 GitHub 账号登录）
-3. **AI API 密钥** - 至少配置一个：
-   - [Google Gemini API Key](https://makersuite.google.com/app/apikey)（推荐）
+3. **AI API 密钥**：
    - [智谱AI API Key](https://open.bigmodel.cn/)
 
 ---
@@ -50,8 +49,6 @@
    | 名称 | 值 | 必需 |
    |------|-----|------|
    | `BIGMODEL_API_KEY` | 你的智谱API Key | **必需** |
-
-   > **注意**：生产环境只使用智谱AI，无需配置 Gemini API Key
 
 4. **部署**
    - 点击 "Deploy" 按钮
@@ -110,13 +107,10 @@
    ```
 
    编辑 `.env.local`：
-```env
-# 本地开发：可同时配置两个 API Key
-VITE_GEMINI_API_KEY=你的_Gemini_API_Key
-VITE_BIGMODEL_API_KEY=你的_智谱API_Key
-```
-
-> **注意**：本地开发可使用 Gemini 和智谱AI，生产环境只使用智谱AI
+   ```env
+   # 智谱AI API Key
+   VITE_BIGMODEL_API_KEY=你的_智谱API_Key
+   ```
 
 4. **测试本地运行**
    ```bash
@@ -173,8 +167,6 @@ VITE_BIGMODEL_API_KEY=你的_智谱API_Key
    BIGMODEL_API_KEY = 你的_智谱API_Key
    ```
 
-   > **注意**：生产环境只需配置智谱AI API Key
-
 3. **部署**
    - 点击 "Deploy" 按钮
    - 等待构建完成
@@ -186,29 +178,18 @@ VITE_BIGMODEL_API_KEY=你的_智谱API_Key
 
 ### 本地开发环境
 
-本地开发可以同时使用 Gemini 和智谱AI：
-
 ```env
-VITE_GEMINI_API_KEY=你的_Gemini_API_Key
 VITE_BIGMODEL_API_KEY=你的_智谱API_Key
 ```
 
 ### 生产环境（Vercel）
 
-生产环境**只使用智谱AI**，只需配置：
-
 ```
 BIGMODEL_API_KEY = 你的_智谱API_Key
 ```
 
-### 获取 API Keys
+### 获取智谱AI API Key
 
-#### Google Gemini API Key（仅本地开发）
-1. 访问 [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. 创建新的 API Key
-3. 复制到 `.env.local`
-
-#### 智谱AI API Key（本地 + 生产）
 1. 访问 [智谱AI 开放平台](https://open.bigmodel.cn/)
 2. 注册/登录账号
 3. 在控制台创建 API Key
@@ -248,8 +229,7 @@ cp .env.example .env.local
 
 编辑 `.env.local`：
 ```env
-GEMINI_API_KEY=你的密钥
-BIGMODEL_API_KEY=你的密钥
+VITE_BIGMODEL_API_KEY=你的_智谱API_Key
 ```
 
 ### 启动开发服务器
@@ -297,7 +277,7 @@ npm run build
 
 ### 环境变量未生效
 
-1. **确认变量名称**：`GEMINI_API_KEY` 不是 `GEMINIKEY`
+1. **确认变量名称**：`BIGMODEL_API_KEY` 不是其他名称
 2. **重新部署**：修改环境变量后必须重新部署
    ```bash
    vercel --prod
@@ -315,7 +295,6 @@ bingoimagetools/
 ├── public/                # 静态资源
 ├── src/                   # 源代码
 │   ├── App.tsx           # 主应用
-│   ├── geminiService.ts  # Gemini 服务封装
 │   └── bigmodelService.ts # 智谱AI 服务封装
 ├── .env.example          # 环境变量模板
 ├── .gitignore           # Git 忽略文件
@@ -403,7 +382,6 @@ vercel logs
 - **请求数**：无限
 
 ### AI API 成本
-- **Gemini 2.5 Flash**：免费（有限额）
 - **智谱AI CogView**：新用户有免费额度
 
 详见各平台定价页面。
@@ -411,12 +389,6 @@ vercel logs
 ---
 
 ## 常见问题
-
-<details>
-<summary><b>Q: 可以同时使用 Gemini 和智谱AI 吗？</b></summary>
-
-A: 可以。应用中可以切换 AI 服务。但至少需要配置一个 API Key。
-</details>
 
 <details>
 <summary><b>Q: 部署后页面空白？</b></summary>
@@ -451,7 +423,6 @@ A: 可以。本项目基于 Vite 构建，可以部署到：
 
 - **Vercel 文档**：[vercel.com/docs](https://vercel.com/docs)
 - **Vercel 社区**：[github.com/vercel/vercel/discussions](https://github.com/vercel/vercel/discussions)
-- **Gemini API 文档**：[ai.google.dev](https://ai.google.dev/docs)
 - **智谱AI 文档**：[open.bigmodel.cn](https://open.bigmodel.cn/dev/api)
 
 ---

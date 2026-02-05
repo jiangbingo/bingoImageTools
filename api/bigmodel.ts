@@ -1,5 +1,5 @@
 /**
- * Vercel Edge Function for AI API calls
+ * Vercel Edge Function for BigModel AI API calls
  *
  * 这个函数作为代理，隐藏真实的 API Key
  * 前端通过调用这个函数来使用 AI 服务
@@ -9,7 +9,7 @@
  */
 
 interface AIRequest {
-  service: 'gemini' | 'bigmodel';
+  service: 'bigmodel';
   action: string;
   params: Record<string, any>;
 }
@@ -37,22 +37,15 @@ export default async function handler(request: Request): Promise<Response> {
       );
     }
 
-    // 根据服务类型调用相应的 API
-    let result;
-    switch (service) {
-      case 'gemini':
-        result = await callGeminiAPI(action, params);
-        break;
-      case 'bigmodel':
-        result = await callBigModelAPI(action, params);
-        break;
-      default:
-        return Response.json(
-          { error: 'Invalid service' } as AIResponse,
-          { status: 400 }
-        );
+    // 目前只支持 BigModel
+    if (service !== 'bigmodel') {
+      return Response.json(
+        { error: 'Only BigModel service is supported' } as AIResponse,
+        { status: 400 }
+      );
     }
 
+    const result = await callBigModelAPI(action, params);
     return Response.json({ success: true, data: result } as AIResponse);
   } catch (error) {
     console.error('AI API Error:', error);
@@ -62,34 +55,6 @@ export default async function handler(request: Request): Promise<Response> {
       } as AIResponse,
       { status: 500 }
     );
-  }
-}
-
-/**
- * 调用 Google Gemini API
- */
-async function callGeminiAPI(action: string, params: Record<string, any>) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    throw new Error('GEMINI_API_KEY not configured');
-  }
-
-  const { GoogleGenAI } = await import('@google/genai');
-  const ai = new GoogleGenAI({ apiKey });
-
-  switch (action) {
-    case 'removeBackground':
-      return await geminiRemoveBackground(ai, params.image);
-    case 'idPhoto':
-      return await geminiIdPhoto(ai, params.image, params.color);
-    case 'upscale':
-      return await geminiUpscale(ai, params.image);
-    case 'restorePhoto':
-      return await geminiRestorePhoto(ai, params.image);
-    case 'removeObject':
-      return await geminiRemoveObject(ai, params.image, params.description);
-    default:
-      throw new Error(`Unknown Gemini action: ${action}`);
   }
 }
 
@@ -120,62 +85,6 @@ async function callBigModelAPI(action: string, params: Record<string, any>) {
     default:
       throw new Error(`Unknown BigModel action: ${action}`);
   }
-}
-
-// ========== Gemini Helper Functions ==========
-
-async function geminiCallAI(ai: any, prompt: string, base64Image: string, aspectRatio?: string) {
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash-image',
-    contents: {
-      parts: [
-        { inlineData: { data: base64Image.split(',')[1], mimeType: 'image/png' } },
-        { text: prompt },
-      ],
-    },
-    config: { imageConfig: { aspectRatio: (aspectRatio as any) || "1:1" } }
-  });
-
-  const part = response.candidates?.[0]?.content?.parts?.find((p: any) => p.inlineData);
-  if (!part?.inlineData) throw new Error('No image generated');
-  return `data:image/png;base64,${part.inlineData.data}`;
-}
-
-async function geminiRemoveBackground(ai: any, image: string) {
-  return geminiCallAI(
-    ai,
-    "Extract the main subject and remove everything else from the background. Output ONLY the subject with a pure transparent background.",
-    image
-  );
-}
-
-async function geminiIdPhoto(ai: any, image: string, color: string) {
-  return geminiCallAI(
-    ai,
-    `Remove background and replace with solid ${color}. Perform light professional face retouching and center the subject for an ID photo.`,
-    image,
-    "3:4"
-  );
-}
-
-async function geminiUpscale(ai: any, image: string) {
-  return geminiCallAI(ai, "Upscale this image, enhance details, and remove noise.", image);
-}
-
-async function geminiRestorePhoto(ai: any, image: string) {
-  return geminiCallAI(
-    ai,
-    "Restore this old photo: remove scratches, fix damages, sharpen blurry parts, and add natural colors if it's black and white.",
-    image
-  );
-}
-
-async function geminiRemoveObject(ai: any, image: string, description: string) {
-  return geminiCallAI(
-    ai,
-    `Smartly remove "${description}" from this image and fill the gap seamlessly with surrounding background textures.`,
-    image
-  );
 }
 
 // ========== BigModel Helper Functions ==========

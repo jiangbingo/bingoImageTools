@@ -3,6 +3,8 @@
  * 浏览器原生 fetch API 实现
  */
 
+import { logger } from '../utils/logger';
+
 interface BigModelConfig {
   apiKey: string;
 }
@@ -100,7 +102,7 @@ export class BigModelService {
       // 将 URL 转换为 base64
       return await this.urlToBase64(data.data[0].url);
     } catch (error: any) {
-      console.error('CogView API Error:', error);
+      logger.error('CogView API Error:', error);
       throw error;
     }
   }
@@ -148,7 +150,7 @@ export class BigModelService {
       const data: ChatCompletionResponse = await response.json();
       return data.choices[0]?.message?.content || '';
     } catch (error: any) {
-      console.error('GLM-4V API Error:', error);
+      logger.error('GLM-4V API Error:', error);
       throw error;
     }
   }

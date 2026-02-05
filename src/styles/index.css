@@ -1,3 +1,8 @@
+/* CropperJS Styles */
+@import 'cropperjs/dist/cropper.css';
+
+@import "tailwindcss";
+
 /* Global Styles */
 body {
   margin: 0;

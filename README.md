@@ -1,7 +1,3 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
-
 # Bingo Image Tools
 
 专业的 AI 图片处理工具集，支持抠图、证件照、放大、老照片修复等多种功能。
@@ -10,7 +6,7 @@
 
 ## 特性
 
-- **🤖 AI 驱动** - 支持 Google Gemini 和智谱 AI 双引擎
+- **🤖 AI 驱动** - 基于智谱 AI CogView 强力驱动
 - **🌐 多语言** - 中文/英文双语界面
 - **⚡ 极速处理** - 基于 Vite 构建，秒级响应
 - **🔒 安全部署** - API Key 通过环境变量管理，不暴露在前端
@@ -52,16 +48,9 @@
 
    编辑 `.env.local`，填入你的 API Key：
    ```env
-   # Google Gemini API Key - 本地开发使用（生产环境不需要）
-   VITE_GEMINI_API_KEY=你的_Gemini_API_Key
-
-   # 智谱AI API Key - 本地开发和生产环境都使用
+   # 智谱AI API Key
    VITE_BIGMODEL_API_KEY=你的_智谱API_Key
    ```
-
-   > **注意**：
-   > - 本地开发可同时使用 Gemini 和智谱AI
-   > - 生产环境（Vercel）只使用智谱AI，只需配置 `BIGMODEL_API_KEY`
 
 3. **启动开发服务器**
    ```bash
@@ -81,8 +70,6 @@
 **部署前准备**：
 在 Vercel 项目设置中配置环境变量：
 - `BIGMODEL_API_KEY` = 你的智谱API Key
-
-> **注意**：生产环境只需要智谱AI API Key，无需配置 Gemini API
 
 详细部署步骤请查看 **[部署指南](DEPLOYMENT.md)**
 
@@ -106,7 +93,6 @@ bingoimagetools/
 ├── public/                # 静态资源
 ├── src/                   # 源代码
 │   ├── App.tsx           # 主应用
-│   ├── geminiService.ts  # Gemini 服务封装
 │   └── bigmodelService.ts # 智谱AI 服务封装
 ├── .env.example          # 环境变量模板
 ├── vercel.json          # Vercel 配置
@@ -121,21 +107,14 @@ bingoimagetools/
 - **框架**：React 19 + TypeScript
 - **构建**：Vite 6
 - **样式**：Tailwind CSS
-- **AI**：Google Gemini 2.5 Flash / 智谱AI CogView
+- **AI**：智谱AI CogView
 - **部署**：Vercel
 
 ---
 
 ## 获取 API Key
 
-### Google Gemini API（仅本地开发）
-
-1. 访问 [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. 创建新的 API Key
-3. 复制到本地 `.env.local` 文件
-4. **生产环境不需要此 Key**
-
-### 智谱AI API（本地 + 生产）
+### 智谱AI API
 
 1. 访问 [智谱AI 开放平台](https://open.bigmodel.cn/)
 2. 注册/登录账号
@@ -171,12 +150,6 @@ npm run preview
 ## 常见问题
 
 <details>
-<summary><b>Q: 本地开发和生产环境使用什么 AI 服务？</b></summary>
-
-A: 本地开发可以同时使用 Gemini 和智谱AI；生产环境（Vercel）只使用智谱AI。
-</details>
-
-<details>
 <summary><b>Q: 部署后 API 调用失败？</b></summary>
 
 A: 检查：
@@ -186,15 +159,9 @@ A: 检查：
 </details>
 
 <details>
-<summary><b>Q: 为什么生产环境不使用 Gemini？</b></summary>
-
-A: 为了简化部署配置和降低成本，生产环境统一使用智谱AI。
-</details>
-
-<details>
 <summary><b>Q: 可以使用其他 AI 服务吗？</b></summary>
 
-A: 可以。参考 `src/geminiService.ts` 和 `src/bigmodelService.ts` 的接口实现，添加新的服务类。
+A: 可以。参考 `src/bigmodelService.ts` 的接口实现，添加新的服务类。
 </details>
 
 ---
