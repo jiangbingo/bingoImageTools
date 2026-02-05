@@ -8,6 +8,8 @@
  * - BIGMODEL_API_KEY (生产环境必需)
  */
 
+export const runtime = 'edge';
+
 interface AIRequest {
   service: 'bigmodel';
   action: string;
