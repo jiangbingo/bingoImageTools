@@ -10,6 +10,15 @@
 
 export const runtime = 'edge';
 
+// Edge Runtime 环境变量
+const getEnv = (key: string): string => {
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(`Environment variable ${key} is not set`);
+  }
+  return value;
+};
+
 interface AIRequest {
   service: 'bigmodel';
   action: string;
@@ -64,10 +73,7 @@ export default async function handler(request: Request): Promise<Response> {
  * 调用智谱 AI API
  */
 async function callBigModelAPI(action: string, params: Record<string, any>) {
-  const apiKey = process.env.BIGMODEL_API_KEY;
-  if (!apiKey) {
-    throw new Error('BIGMODEL_API_KEY not configured');
-  }
+  const apiKey = getEnv('BIGMODEL_API_KEY');
 
   const baseUrl = 'https://open.bigmodel.cn/api/paas/v4';
 
